@@ -11,7 +11,7 @@ Each entry links straight to the original thread.
 - [LLD](#lld) (5)
 - [Backend Engineering](#backend-engineering) (9)
 - [Engineering Articles](#engineering-articles) (9)
-- [Distributed Systems](#distributed-systems) (2)
+- [Distributed Systems](#distributed-systems) (8)
 - [Microservices](#microservices) (6)
 - [Machine Learning](#machine-learning) (1)
 - [AI Engineering](#ai-engineering) (1)
@@ -92,6 +92,12 @@ Each entry links straight to the original thread.
 |---|---|---|
 | [Distributed Systems Part-1 (Introduction)](https://x.com/Harry_The_Nerd/status/2092234002610680246) | Distributed Systems: Foundations and the Impossibility Results | 2026-08-25 |
 | [Distributed Systems Part-2 (Time, Order, and Causality)](https://x.com/Harry_The_Nerd/status/2092969096774287363) | Distributed Systems: Time, Order, and Causality | 2026-08-27 |
+| [Distributed Systems Part-3 (Replication Strategies)](https://x.com/Harry_The_Nerd/status/2093700736299487430) | Replication Strategies in Distributed Systems | 2026-08-29 |
+| [Distributed Systems Part-4 (Consistency Models)](https://x.com/Harry_The_Nerd/status/2094422311906726202) | Different consistency models in Distributed Systems | 2026-08-31 |
+| [Distributed Systems Part-5 (Consensus Algorithms)](https://x.com/Harry_The_Nerd/status/2095122732065443969) | Consensus Algorithms in Distributed Systems | 2026-09-02 |
+| [Distributed Systems Part-6 (Partitioning and Sharding)](https://x.com/Harry_The_Nerd/status/2095844630399263161) | How to split your data across many nodes so that no single machine has to hold all of it or serve all the traffic for it. | 2026-09-04 |
+| [Distributed Systems Part-7 (Failure Detection and Fault Tolerance)](https://x.com/Harry_The_Nerd/status/2096163179596525852) | Failure detetction and fault tolerance in distributed systems | 2026-09-05 |
+| [Distributed Systems Part-8 (Distributed Transactions Revisited)](https://x.com/Harry_The_Nerd/status/2096575304722747738) | Distributed transactions and case-studies | 2026-09-06 |
 
 ## Microservices
 

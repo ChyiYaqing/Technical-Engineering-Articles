@@ -432,6 +432,49 @@
       "category": "Distributed Systems",
       "date": "2026-08-27",
       "description": "Distributed Systems: Time, Order, and Causality"
+    },
+    {
+      "title": "Distributed Systems Part-3 (Replication Strategies)",
+      "url": "https://x.com/Harry_The_Nerd/status/2093700736299487430",
+      "category": "Distributed Systems",
+      "date": "2026-08-29",
+      "description": "Replication Strategies in Distributed Systems"
+    },
+    {
+      "title": "Distributed Systems Part-4 (Consistency Models)",
+      "url": "https://x.com/Harry_The_Nerd/status/2094422311906726202",
+      "category": "Distributed Systems",
+      "date": "2026-08-31",
+      "description": "Different consistency models in Distributed Systems"
+    },
+    {
+      "title": "Distributed Systems Part-5 (Consensus Algorithms)",
+      "url": "https://x.com/Harry_The_Nerd/status/2095122732065443969",
+      "category": "Distributed Systems",
+      "date": "2026-09-02",
+      "description": "Consensus Algorithms in Distributed Systems"
+    },
+    {
+      "title": "Distributed Systems Part-6 (Partitioning and Sharding)",
+      "url": "https://x.com/Harry_The_Nerd/status/2095844630399263161",
+      "category": "Distributed Systems",
+      "date": "2026-09-04",
+      "description": "How to split your data across many nodes so that no single machine has to hold all of it or serve all the traffic for it."
+    },
+    {
+      "title": "Distributed Systems Part-7 (Failure Detection and Fault Tolerance)",
+      "url": "https://x.com/Harry_The_Nerd/status/2096163179596525852",
+      "category": "Distributed Systems",
+      "date": "2026-09-05",
+      "description": "Failure detetction and fault tolerance in distributed systems"
+    },
+    {
+      "title": "Distributed Systems Part-8 (Distributed Transactions Revisited)",
+      "url": "https://x.com/Harry_The_Nerd/status/2096575304722747738",
+      "category": "Distributed Systems",
+      "date": "2026-09-06",
+      "description": "Distributed transactions and case-studies"
     }
+
   ]
 }
