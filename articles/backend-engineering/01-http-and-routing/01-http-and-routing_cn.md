@@ -85,21 +85,23 @@ HttpOnly 表示 JS 读不到它。Secure 表示只走 HTTPS。SameSite=Strict �
 
 **为什么需要 CORS？**
 
-如果没有 CORS，任何网站都能悄悄用你自己的 cookie 从别的站点偷走你的数据。具体是这样的：
+如果浏览器允许任意网页读取其他源的响应，恶意网站就可能借用你在其他网站的登录状态窃取数据。为了看清 CORS 负责哪一段，可以先假设银行允许跨站携带 cookie，并且恶意页面发起了一个显式携带凭据的请求：
 
 你登录了 [bank.com](https://x.com/Harry_The_Nerd/status/bank.com)，浏览器保存了你的会话 cookie。
 
 你在新标签页里访问了 [evil-site.com](https://x.com/Harry_The_Nerd/status/evil-site.com)。
 
-恶意站点的 JavaScript 悄悄执行：fetch('[https://bank.com/my-account](https://bank.com/my-account)')
+恶意站点的 JavaScript 悄悄执行：`fetch('https://bank.com/my-account', { credentials: 'include' })`
 
-浏览器自动把你的银行 cookie 附在这个请求上。
+在 cookie 的 `SameSite` 等设置允许跨站发送的前提下，浏览器把银行 cookie 附在这个请求上。
 
 银行看到一个有效会话，于是返回了你的账户数据。
 
 恶意站点读到了这个响应。你的余额、账号、交易记录，全没了。
 
-CORS 拦住的就是第 6 步。请求照样发到银行，银行照样返回响应。但浏览器会在把响应交给 JavaScript 之前把它截下来，然后问：「[bank.com](https://x.com/Harry_The_Nerd/status/bank.com) 允许 [evil-site.com](https://x.com/Harry_The_Nerd/status/evil-site.com) 读这份数据吗？」没有 Access-Control-Allow-Origin 头？浏览器就默默丢掉响应。恶意站点拿到的是一个 CORS 错误，而不是你的数据。
+CORS 拦住的是恶意站点读取响应这一步。请求可能已经到达银行，银行也可能已经返回响应，但浏览器会在把响应交给 JavaScript 之前检查：[bank.com](https://bank.com/) 是否允许 [evil-site.com](https://evil-site.com/) 读取这份数据？没有匹配的 `Access-Control-Allow-Origin` 响应头，JavaScript 就只能得到一个 CORS 错误。
+
+CORS 不是身份认证，也不能代替 CSRF 防护。对于浏览器本来就能发送的简单请求，服务端仍然要校验 CSRF Token、`Origin` 或 `Sec-Fetch-Site` 等信息，不能因为前端读不到响应就认为操作安全。
 
 **简单请求 vs 预检请求**
 
@@ -113,13 +115,34 @@ OPTIONS /api/data HTTP/1.1 Origin: [https://app.com](https://app.com/) Access-Co
 
 它其实在问：「我想发一个带 Authorization 头的 PUT 请求，允许吗？」服务器回复它的许可范围，浏览器核对之后，只有获批才会发出真正的请求。
 
-**为什么要有预检？** GET 只是读数据，就算请求过去了，JS 没有许可也读不到响应，直接试一下是安全的。但 DELETE /account 是真的删掉了东西，CORS 还没来得及检查，损害就已经造成了。所以浏览器要先申请许可，再扣扳机。
+**为什么要有预检？** HTML 表单早就能发送部分跨源 GET 和 POST 请求，所以 CORS 仍允许这类简单请求直接到达服务器，再决定是否把响应交给 JavaScript。PUT、DELETE、自定义请求头等能力超出了传统表单的范围，浏览器会先用 OPTIONS 询问服务器是否理解并允许这类跨源请求。服务端不能把 CORS 当作操作授权，收到任何会修改数据的请求都要单独校验身份和权限。
 
 Access-Control-Max-Age 头会缓存预检的批准结果，这样浏览器就不用每次请求都重新确认一遍：
 
 Access-Control-Max-Age: 86400 → 24 小时内有效
 
 还有一件大多数开发者会忘的事：**CORS 纯粹是浏览器的机制。** curl、Node、Python、Postman 都完全不管 CORS。它存在的唯一目的，是保护真实的网页用户。
+
+**用浏览器做一次 CORS 实验**
+
+同目录的 [`server.go`](./server.go) 只用 Go 标准库，同时启动两个 HTTP 服务：
+
+- `http://localhost:8080` 提供实验页面。
+- `http://localhost:8081` 提供 API。
+
+协议和主机名相同，端口不同，仍然属于两个源。从仓库根目录启动服务：
+
+```bash
+go run ./articles/backend-engineering/01-http-and-routing/server.go
+```
+
+浏览器打开 [http://localhost:8080](http://localhost:8080)，再打开开发者工具的 Network 和 Console 面板。页面上的三个按钮对应三组实验：
+
+1. **无 CORS 许可头：** API 日志会显示服务器收到了 GET 请求，Network 面板里也能看到响应；页面的 JavaScript 却读不到响应，Console 会报告 CORS 错误。这说明 CORS 拦截的是浏览器把响应交给 JavaScript 的过程，请求本身仍可能到达服务器。
+2. **允许当前源：** API 返回 `Access-Control-Allow-Origin: http://localhost:8080`，页面可以读取并显示 JSON。把浏览器地址改成 `http://127.0.0.1:8080` 再试，即使它仍指向本机，也会因为主机名不同而匹配失败。
+3. **触发预检：** 页面发送一个带自定义请求头的 PUT 请求。Network 面板会先出现 OPTIONS，服务端许可方法和请求头之后，浏览器才发送 PUT。连续点击时，浏览器可能在 `Access-Control-Max-Age: 10` 指定的十秒内复用预检结果，因此暂时看不到新的 OPTIONS。
+
+实验结束后，在终端按 `Ctrl+C` 停止服务。如果 8080 或 8081 已被占用，可以修改 `server.go` 顶部的 `pageAddress` 和 `apiAddress`，页面中的源和请求地址会自动同步。
 
 **内容协商与压缩**
 
